@@ -1,0 +1,13 @@
+// use prisma-8
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  username  String?
+  name      String?
+  password  String
+  phone     String
+  age       Int
+  createdAt TimestamptzString @default(now())
+  updatedAt temporal.updatedAtString()
+}
