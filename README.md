@@ -168,6 +168,37 @@ npm run format   # prettier sobre src/ y test/
 - El cliente tipado se importa desde `src/prisma/db.ts`.
 - `npx prisma migration status` muestra el estado de las migraciones aplicadas.
 
+### Agregar una tabla o columna nueva
+
+1. **Editar el contrato** — agregar el `model` (o el campo) en `src/prisma/contract.prisma`.
+2. **Emitir el contrato**:
+   ```bash
+   npx prisma contract emit
+   ```
+3. **Planear la migración**:
+   ```bash
+   npx prisma migration plan --name <nombre_descriptivo>
+   ```
+   Genera un paquete en `migrations/app/<timestamp>_<nombre>/`. Si el cambio requiere backfill (ej. columna `NOT NULL` en una tabla con filas), el `migration.ts` queda con `placeholder(...)` por rellenar a mano.
+   - Al rellenar un backfill, evitar el query builder (`db.public.<tabla>.update(...)`) si toca una columna con timestamp auto-generado (`updatedAt`): genera un valor no determinístico en cada build y provoca `MIGRATION.CONTRACT_SPACE_VIOLATION` (hash mismatch). Usar `rawSql({...})` con SQL explícito (`now()` literal, no parámetro JS) en su lugar.
+4. **Self-emit si quedaron placeholders**:
+   ```bash
+   node migrations/app/<timestamp>_<nombre>/migration.ts
+   ```
+5. **Aplicar la migración**:
+   ```bash
+   npx prisma db migrate
+   ```
+6. **Verificar** (opcional pero recomendado):
+   ```bash
+   npx prisma db verify
+   ```
+7. **Actualizar el `db` ref** — `db migrate` no lo avanza solo; si vas a encadenar más `migration plan` sin pasar `--from`, corré:
+   ```bash
+   npx prisma migration ref set db <hash-final-aplicado>
+   ```
+   (el hash aparece como `to` en la salida de `db migrate`). Alternativa en desarrollo activo: usar `npx prisma db update` en vez de `db migrate`, que sí mantiene el ref al día automáticamente.
+
 ## Licencia
 
 UNLICENSED (proyecto privado de práctica).
