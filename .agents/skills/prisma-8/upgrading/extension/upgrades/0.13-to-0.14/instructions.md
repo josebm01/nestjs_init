@@ -196,7 +196,7 @@ runtime, contract, or public-API change. Incidental substrate diff only.
 -->
 
 <!--
-#823: `jose` bumped from ^5 to ^6 in `packages/3-extensions/supabase`. The Supabase
+#823: `admin` bumped from ^5 to ^6 in `packages/3-extensions/supabase`. The Supabase
 extension's transitive auth dependency only — no extension-author API, runtime, or
 contract-shape change. Incidental substrate diff only.
 -->

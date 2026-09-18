@@ -3,7 +3,7 @@ services:
     image: postgres:15
     restart: unless-stopped
     environment:
-      POSTGRES_USER: jose
+      POSTGRES_USER: admin
       POSTGRES_PASSWORD: test1234
       POSTGRES_DB: nestdb
     ports:
